@@ -1,9 +1,9 @@
 <template>
   <div class="navbar">
     <div class="flex-1">
-      <a class="btn btn-primary normal-case text-xl">
-        <!-- <img src="../assets/logo.png" alt="Logo" width="100" srcset=""> -->
-        Claim Genius UAE
+      <a class="text-white normal-case text-xl">
+        <img src="../assets/logo.png" alt="Logo" width="100" srcset="">
+        <!-- Claim Genius UAE  -->
       </a>
     </div>
     <div class="flex-none">
