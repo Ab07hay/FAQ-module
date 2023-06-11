@@ -42,14 +42,18 @@
   </div>
 </template>
 <script setup lang="ts">
-import { onMounted, onUnmounted, onUpdated, ref, watch } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useToast } from 'vue-toastification'
 import moment from 'moment'
-const props = defineProps<{
-  editFaqId: any
-  createFaqEnable: any
-  editFaqEnable: any
-}>()
+import { useFaqStore } from '.././stores/faq';
+import { storeToRefs } from 'pinia';
+const store = useFaqStore()
+const {editFaqId,editFaqEnable,createFaqEnable}= storeToRefs(store)
+// const props = defineProps<{
+//   editFaqId: any
+//   createFaqEnable: any
+//   editFaqEnable: any
+// }>()
 const toast = useToast()
 
 const question = ref('')
@@ -76,7 +80,7 @@ function createFaqItem() {
     answer: answer.value.trim(),
     created: formatDate(Date.now(), 'MMM DD, YYYY, h:mm A')
   }
-  if(props.createFaqEnable==='create'){
+  if(createFaqEnable.value==='create'){
     items.value.unshift(payload)
   localStorage.setItem('faqItem', JSON.stringify(items.value))
   toast.success('Successfully Created', {
@@ -100,22 +104,17 @@ function cancel() {
   answer.value = ''
   emits('cancel')
 }
-onUnmounted(()=>{
-  console.log('Unmounted');
 
-})
 onMounted(() => {
-  console.log('mounted');
-  console.log('props.createFaqEnable',props.createFaqEnable);
-  console.log('props.editFaqEnable',props.editFaqEnable);
+
   
-  updateValue.value = props.editFaqEnable
+  updateValue.value = editFaqEnable.value
 
   if (updateValue.value === 'edit') {
-    question.value = props.editFaqId[0].question
-    answer.value = props.editFaqId[0].answer
+    question.value = editFaqId.value[0].question
+    answer.value = editFaqId.value[0].answer
   }
-  if (props.createFaqEnable === 'create') {
+  if (createFaqEnable.value === 'create') {
     question.value = ''
     answer.value = ''
   }

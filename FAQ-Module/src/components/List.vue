@@ -5,20 +5,18 @@
   <div class="text-right mt-3">
     <label for="my-modal" class="btn btn-primary" @click="createFaq()">Create FAQ</label>
     <div :key="Math.random()">
-      <modalApp
-        :editFaqId="editFaqId"
-        :createFaqEnable="createFaqEnable"
-        :editFaqEnable="editFaqEnable"
-        @cancel="cancel"
-      >
-      </modalApp>
+      <modalApp @cancel="cancel" />
     </div>
   </div>
   <div class="form-control mt-3">
     <div class="input-group">
-      <input type="text" placeholder="Search Quetion..." v-model="searchFieldValue" 
-            class="input input-bordered" />
-           
+      <input
+        type="text"
+        placeholder="Search Quetion..."
+        v-model="searchFieldValue"
+        class="input input-bordered"
+      />
+
       <button class="btn btn-primary">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -52,9 +50,9 @@
           <th>Delete</th>
         </tr>
       </thead>
-      <tbody v-if="filteredItems && filteredItems.length>0">
+      <tbody v-if="filteredItems && filteredItems.length > 0">
         <!-- row 1 -->
-        <tr  class="bg-base-200" v-for="(item, index) in filteredItems" :key="item">
+        <tr class="bg-base-200" v-for="(item, index) in filteredItems" :key="item">
           <th>{{ index + 1 }}</th>
           <td>
             <span
@@ -109,63 +107,70 @@
             </button>
           </td>
         </tr>
-  
       </tbody>
       <tbody v-else>
-          <tr>
-            <td align="center" colspan="7"><i>No frequently asked quetions Found</i> </td>
-          </tr>
-        </tbody>
+        <tr>
+          <td align="center" colspan="7"><i>No frequently asked quetions Found</i></td>
+        </tr>
+      </tbody>
     </table>
   </div>
 </template>
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted } from 'vue'
 import modalApp from './Modal.vue'
-import { useToast } from 'vue-toastification'
-const toast = useToast()
-const searchFieldValue = ref('')
-const faqData = ref()
-const editFaqId = ref<{}>()
-const createFaqEnable = ref('')
-const editFaqEnable = ref('')
-function createFaq() {
-  createFaqEnable.value = 'create'
-}
-function cancel() {
-  createFaqEnable.value = 'create'
-  editFaqEnable.value = ''
-}
-onMounted(() => {
-  const listItems: any = localStorage.getItem('faqItem') ? localStorage.getItem('faqItem') : ''
-  faqData.value = JSON.parse(listItems)
-})
-function deleteFaq(index: number) {
-  faqData.value.splice(index, 1)
-  localStorage.setItem('faqItem', JSON.stringify(faqData.value))
-  toast.success('Successfully Deleted', {
-    timeout: 2000
-  })
-}
-function searchByValue(payload:any) {
-  faqData.value=payload
-}
-function editFaq(index: number) {
-  editFaqId.value = faqData.value.filter((data: any, i: any) => {
-    return i === index ? data : ''
-  })
-  createFaqEnable.value = ''
-  editFaqEnable.value = 'edit'
-}
-const filteredItems = computed(() => {
-  if (searchFieldValue.value === '') {
-    return faqData.value
-  } else {
-    const searchTerm = searchFieldValue.value.toLowerCase()
-    const filterValue: any = faqData.value.filter((item: { question: string }) =>
-      item.question.toLowerCase().includes(searchTerm)
-    )
-    return filterValue
-  }
-})
+import { useFaqStore } from '../stores/faq'
+import { storeToRefs } from 'pinia'
+const store = useFaqStore()
+const { createFaqEnable, editFaqEnable, editFaqId, faqData, searchFieldValue } = storeToRefs(store)
+const { cancel, createFaq, deleteFaq, editFaq } = store
+const filteredItems = computed(() => store.filteredItemss)
+// import { useToast } from 'vue-toastification'
+// const toast = useToast()
+// const searchFieldValue = ref('')
+// const faqData = ref()
+// const editFaqId = ref<{}>()
+// const createFaqEnable = ref('')
+// const editFaqEnable = ref('')
+// function createFaq() {
+//   createFaqEnable.value = 'create'
+// }
+// function cancel() {
+//   createFaqEnable.value = 'create'
+//   editFaqEnable.value = ''
+// }
+// onMounted(() => {
+//   console.log('hello mounted');
+
+//   const listItems: any = localStorage.getItem('faqItem') ? localStorage.getItem('faqItem') : ''
+//   faqData.value = JSON.parse(listItems)
+// })
+// function deleteFaq(index: number) {
+//   faqData.value.splice(index, 1)
+//   localStorage.setItem('faqItem', JSON.stringify(faqData.value))
+//   toast.success('Successfully Deleted', {
+//     timeout: 2000
+//   })
+// }
+// function searchByValue(payload:any) {
+//   faqData.value=payload
+// }
+// function editFaq(index: number) {
+//   editFaqId.value = faqData.value.filter((data: any, i: any) => {
+//     return i === index ? data : ''
+//   })
+//   createFaqEnable.value = ''
+//   editFaqEnable.value = 'edit'
+// }
+// const filteredItems = computed(() => {
+//   if (searchFieldValue.value === '') {
+//     return faqData.value
+//   } else {
+//     const searchTerm = searchFieldValue.value.toLowerCase()
+//     const filterValue: any = faqData.value.filter((item: { question: string }) =>
+//       item.question.toLowerCase().includes(searchTerm)
+//     )
+//     return filterValue
+//   }
+// })
 </script>
