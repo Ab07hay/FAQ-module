@@ -9,13 +9,16 @@
         :editFaqId="editFaqId"
         :createFaqEnable="createFaqEnable"
         :editFaqEnable="editFaqEnable"
+        @cancel="cancel"
       >
       </modalApp>
     </div>
   </div>
   <div class="form-control mt-3">
     <div class="input-group">
-      <input type="text" placeholder="Search…" class="input input-bordered" />
+      <input type="text" placeholder="Search Quetion..." v-model="searchFieldValue" 
+            class="input input-bordered" />
+           
       <button class="btn btn-primary">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -34,6 +37,7 @@
       </button>
     </div>
   </div>
+  <!-- <searchBar @searchByValue="searchByValue"></searchBar> -->
   <div class="overflow-x-auto mt-5">
     <table class="table table-zebra w-full">
       <!-- head -->
@@ -48,9 +52,9 @@
           <th>Delete</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody v-if="filteredItems && filteredItems.length>0">
         <!-- row 1 -->
-        <tr class="bg-base-200" v-for="(item, index) in faqData" :key="item">
+        <tr  class="bg-base-200" v-for="(item, index) in filteredItems" :key="item">
           <th>{{ index + 1 }}</th>
           <td>
             <span
@@ -68,22 +72,6 @@
           </td>
           <td><span></span>{{ item.created }}</td>
           <td><span></span>{{ item.created }}</td>
-          <!-- <td><a href="" @click="editFaq(index)">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="w-6 h-6"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
-              />
-            </svg></a>
-          </td> -->
           <td>
             <label for="my-modal" class="btn btn-outline" @click="editFaq(index)">
               <svg
@@ -121,20 +109,32 @@
             </button>
           </td>
         </tr>
+  
       </tbody>
+      <tbody v-else>
+          <tr>
+            <td align="center" colspan="7"><i>No frequently asked quetions Found</i> </td>
+          </tr>
+        </tbody>
     </table>
   </div>
 </template>
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import modalApp from './Modal.vue'
+import { useToast } from 'vue-toastification'
+const toast = useToast()
+const searchFieldValue = ref('')
 const faqData = ref()
 const editFaqId = ref<{}>()
 const createFaqEnable = ref('')
 const editFaqEnable = ref('')
-
 function createFaq() {
   createFaqEnable.value = 'create'
+}
+function cancel() {
+  createFaqEnable.value = 'create'
+  editFaqEnable.value = ''
 }
 onMounted(() => {
   const listItems: any = localStorage.getItem('faqItem') ? localStorage.getItem('faqItem') : ''
@@ -143,11 +143,29 @@ onMounted(() => {
 function deleteFaq(index: number) {
   faqData.value.splice(index, 1)
   localStorage.setItem('faqItem', JSON.stringify(faqData.value))
+  toast.success('Successfully Deleted', {
+    timeout: 2000
+  })
+}
+function searchByValue(payload:any) {
+  faqData.value=payload
 }
 function editFaq(index: number) {
   editFaqId.value = faqData.value.filter((data: any, i: any) => {
     return i === index ? data : ''
   })
+  createFaqEnable.value = ''
   editFaqEnable.value = 'edit'
 }
+const filteredItems = computed(() => {
+  if (searchFieldValue.value === '') {
+    return faqData.value
+  } else {
+    const searchTerm = searchFieldValue.value.toLowerCase()
+    const filterValue: any = faqData.value.filter((item: { question: string }) =>
+      item.question.toLowerCase().includes(searchTerm)
+    )
+    return filterValue
+  }
+})
 </script>

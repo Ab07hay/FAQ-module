@@ -3,15 +3,15 @@
   <input type="checkbox" id="my-modal" class="modal-toggle" />
   <div class="modal">
     <div class="modal-box">
-      <div class="form-control w-full max-w-xs" :key="Math.random()">
+      <div class="form-control w-full max-w-xs">
         <label class="label">
-          <span class="label-text text-black">What is your quetion?</span>
+          <span class="label-text text-black">Write your quetion</span>
           <!-- <span class="label-text-alt">Top Right label</span> -->
         </label>
         <input
           type="text"
           placeholder="Type here"
-          v-model="question"
+          v-model.trim="question"
           class="input input-bordered w-full max-w-xs"
         />
         <label class="label">
@@ -43,18 +43,22 @@
 </template>
 <script setup lang="ts">
 import { onMounted, onUnmounted, onUpdated, ref, watch } from 'vue'
+import { useToast } from 'vue-toastification'
 import moment from 'moment'
 const props = defineProps<{
   editFaqId: any
   createFaqEnable: any
   editFaqEnable: any
 }>()
+const toast = useToast()
+
 const question = ref('')
 const answer = ref('')
-const updateValue=ref('')
+const updateValue = ref('')
 const items = ref<Record<string, string>[]>([])
 const emits = defineEmits<{
-  (e: 'createFaqItem', payload: Object): void
+  (e: 'cancel'): void
+  
 }>()
 function formatDate(date: string | Date | number, dateFormat = 'MMMM Do YYYY, h:mm:ss A') {
   return moment(date).format(dateFormat)
@@ -68,27 +72,52 @@ re.forEach((element: any) => {
 items.value.push()
 function createFaqItem() {
   const payload = {
-    question: question.value,
-    answer: answer.value,
+    question: question.value.trim(),
+    answer: answer.value.trim(),
     created: formatDate(Date.now(), 'MMM DD, YYYY, h:mm A')
   }
-  items.value.unshift(payload)
+  if(props.createFaqEnable==='create'){
+    items.value.unshift(payload)
   localStorage.setItem('faqItem', JSON.stringify(items.value))
+  toast.success('Successfully Created', {
+    timeout: 2000
+  })
+  }
+  else{
+    items.value[4].question=payload.question
+    items.value[4].answer=payload.answer
+    items.value[4].updated=formatDate(Date.now(), 'MMM DD, YYYY, h:mm A')
+    
+  localStorage.setItem('faqItem', JSON.stringify(items.value))
+  toast.success('Successfully Updated', {
+    timeout: 2000
+  })
+  }
 }
 function cancel() {
-    question.value = ''
-    updateValue.value='create'
-    answer.value = ''
+  question.value = ''
+  updateValue.value = ''
+  answer.value = ''
+  emits('cancel')
 }
+onUnmounted(()=>{
+  console.log('Unmounted');
+
+})
 onMounted(() => {
-  updateValue.value=props.editFaqEnable
-  if (props.createFaqEnable === 'create') {
-    question.value = ''
-    answer.value = ''
-  }
+  console.log('mounted');
+  console.log('props.createFaqEnable',props.createFaqEnable);
+  console.log('props.editFaqEnable',props.editFaqEnable);
+  
+  updateValue.value = props.editFaqEnable
+
   if (updateValue.value === 'edit') {
     question.value = props.editFaqId[0].question
     answer.value = props.editFaqId[0].answer
+  }
+  if (props.createFaqEnable === 'create') {
+    question.value = ''
+    answer.value = ''
   }
 })
 </script>
