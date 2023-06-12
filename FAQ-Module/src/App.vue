@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import Footer from './components/Footer.vue'
-import Navbar from './components/Navbar.vue'
-import List from './components/List.vue'
 </script>
 
 <template>

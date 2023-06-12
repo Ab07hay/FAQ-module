@@ -1,5 +1,4 @@
 <template>
-  <!-- <progress class="progress w-56"></progress> -->
   <input type="checkbox" id="my-modal" class="modal-toggle" />
   <div class="modal">
     <div class="modal-box">
@@ -42,13 +41,6 @@
   </div>
 </template>
 <script setup lang="ts">
-import { onMounted, onUpdated } from 'vue'
-import { useFaqStore } from '.././stores/faq'
-import { storeToRefs } from 'pinia'
-import { useModalStore } from '../stores/modal'
-
-
-
 const store = useFaqStore()
 const { editFaqId, editFaqEnable, createFaqEnable } = storeToRefs(store)
 const modalStore = useModalStore()
@@ -65,10 +57,7 @@ const emits = defineEmits<{
   (e: 'createFaq'): void
   
 }>()
-function createFaq() {
-  emits('createFaq')
-}
-items.value.push()
+
 function cancel() {
   question.value = ''
   updateValue.value = ''

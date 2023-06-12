@@ -4,6 +4,7 @@ import { useFaqStore } from './faq'
 import { formatDate } from '@/composable/formatDate'
 import { useToast } from 'vue-toastification'
 import type { FaqData } from '@/interfaces/faqPayload'
+import { getLocalStorageData } from '@/composable/localStorageData'
 
 export const useModalStore = defineStore('modal', () => {
   const toast = useToast()
@@ -14,12 +15,16 @@ export const useModalStore = defineStore('modal', () => {
   const answer = ref('')
   const updateValue = ref('')
   const items = ref<FaqData[]>([])
- 
+//  function getLocalStorageData() {
+//   const getFaqItemData:any = localStorage.getItem('faqItem') ? localStorage.getItem('faqItem') : ''
+//   return JSON.parse(getFaqItemData)
+//  }
   function createFaqItem () {
-    const previousItems: any = localStorage.getItem('faqItem') ? localStorage.getItem('faqItem') : ''
-    const re = JSON.parse(previousItems)
+    // const previousItems: any = localStorage.getItem('faqItem') ? localStorage.getItem('faqItem') : ''
+    // const re = JSON.parse(previousItems)
+    const localStorageData=getLocalStorageData();
     items.value=[]
-    re.forEach((element: any) => {
+    localStorageData.forEach((element: FaqData) => {
       items.value.push(element)
     })
     const payload:FaqData = {

@@ -117,11 +117,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { computed } from 'vue'
 // import ModalApp from './Modal.vue'
-import Modal from './Modal.vue';
-import { useFaqStore } from '../stores/faq'
-import { storeToRefs } from 'pinia'
 const store = useFaqStore()
 const { createFaqEnable, editFaqEnable, editFaqId, faqData, searchFieldValue } = storeToRefs(store)
 const { cancel,  deleteFaq, editFaq,createFaq } = store

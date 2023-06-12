@@ -1,3 +1,4 @@
+import { getLocalStorageData } from '@/composable/localStorageData'
 import type { FaqData } from '@/interfaces/faqPayload'
 import { defineStore } from 'pinia'
 import { computed, ref, watch } from 'vue'
@@ -12,9 +13,9 @@ export const useFaqStore = defineStore('faqModule', () => {
   const createFaqEnable = ref('')
   const editFaqEnable = ref('')
   const toast = useToast()
-  const listItems: any = localStorage.getItem('faqItem') ? localStorage.getItem('faqItem') : ''
-  faqData.value = JSON.parse(listItems)
-
+  // const listItems: any = localStorage.getItem('faqItem') ? localStorage.getItem('faqItem') : ''
+  // faqData.value = JSON.parse(listItems)
+  faqData.value=getLocalStorageData()
   const filteredItemss = computed(() => {
     if (searchFieldValue.value === '') {
       return faqData.value
@@ -28,8 +29,9 @@ export const useFaqStore = defineStore('faqModule', () => {
   })
 
   function reloadFaq() {
-    const listItems: any = localStorage.getItem('faqItem') ? localStorage.getItem('faqItem') : ''
-    faqData.value = JSON.parse(listItems)
+    // const listItems: any = localStorage.getItem('faqItem') ? localStorage.getItem('faqItem') : ''
+    // faqData.value = JSON.parse(listItems)
+    faqData.value=getLocalStorageData()
   }
   
   function editFaq(index: number) {
@@ -49,9 +51,7 @@ export const useFaqStore = defineStore('faqModule', () => {
       toast.success('Successfully Deleted', {
         timeout: 2000
       })
-    } else {
-      // text = "You canceled!";
-    }
+    } 
   }
 
   function createFaq() {

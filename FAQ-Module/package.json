@@ -16,6 +16,8 @@
     "@vee-validate/rules": "^4.9.6",
     "moment": "^2.29.4",
     "pinia": "^2.0.36",
+    "unplugin-auto-import": "^0.16.4",
+    "unplugin-vue-components": "^0.25.1",
     "vee-validate": "^4.5.8",
     "vue": "^3.3.2",
     "vue-router": "^4.2.0",
