@@ -8,33 +8,15 @@
       <Modal :editFaqId="editFaqId" :createFaqEnable="createFaqEnable" :editFaqEnable="editFaqEnable" @cancel="cancel"/>
     </div>
   </div>
-  <div class="form-control mt-3">
-    <div class="input-group">
+  <div class="text-right mt-3">
       <input
-        type="text"
-        placeholder="Search Quetion..."
-        v-model="searchFieldValue"
-        class="input input-bordered"
+        type="text" 
+        placeholder="Search Quetion... "
+        v-model="searchFieldValue" 
+        class="input input-bordered w-1/3"
       />
-
-      <button class="btn btn-primary">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-6 w-6"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-          />
-        </svg>
-      </button>
     </div>
-  </div>
+    
   <!-- <searchBar @searchByValue="searchByValue"></searchBar> -->
   <div class="overflow-x-auto mt-5">
     <table class="table table-zebra w-full">
@@ -117,7 +99,6 @@
   </div>
 </template>
 <script setup lang="ts">
-// import ModalApp from './Modal.vue'
 const store = useFaqStore()
 const { createFaqEnable, editFaqEnable, editFaqId, faqData, searchFieldValue } = storeToRefs(store)
 const { cancel,  deleteFaq, editFaq,createFaq } = store

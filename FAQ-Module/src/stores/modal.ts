@@ -1,57 +1,60 @@
 import { defineStore, storeToRefs } from 'pinia'
-import { ref ,watch} from 'vue'
+import { ref } from 'vue'
 import { useFaqStore } from './faq'
 import { formatDate } from '@/composable/formatDate'
-import { useToast } from 'vue-toastification'
 import type { FaqData } from '@/interfaces/faqPayload'
-import { getLocalStorageData } from '@/composable/localStorageData'
+import { getLocalStorageData, setLocalStorageData } from '@/composable/localStorageData'
+import { showSuccessToast } from '@/composable/toast'
 
 export const useModalStore = defineStore('modal', () => {
-  const toast = useToast()
   const store = useFaqStore()
-  const { editFaqId, editFaqEnable, createFaqEnable,editQueId } = storeToRefs(store)
-  const {filteredItemss}=store
+  const { createFaqEnable, editQueId } = storeToRefs(store)
   const question = ref('')
   const answer = ref('')
   const updateValue = ref('')
   const items = ref<FaqData[]>([])
-//  function getLocalStorageData() {
-//   const getFaqItemData:any = localStorage.getItem('faqItem') ? localStorage.getItem('faqItem') : ''
-//   return JSON.parse(getFaqItemData)
-//  }
-  function createFaqItem () {
-    // const previousItems: any = localStorage.getItem('faqItem') ? localStorage.getItem('faqItem') : ''
-    // const re = JSON.parse(previousItems)
-    const localStorageData=getLocalStorageData();
-    items.value=[]
+
+  function createFaqItem() {
+    const localStorageData = getLocalStorageData()
+    items.value = []
     localStorageData.forEach((element: FaqData) => {
       items.value.push(element)
     })
-    const payload:FaqData = {
+    const payload: FaqData = {
       question: question.value.trim(),
       answer: answer.value.trim(),
       created: formatDate(Date.now(), 'MMM DD, YYYY, h:mm A'),
-      updated:''
+      updated: ''
     }
     if (createFaqEnable.value === 'create') {
       items.value.unshift(payload)
-      localStorage.setItem('faqItem', JSON.stringify(items.value))
-      store.reloadFaq();
-      toast.success('Successfully Created', {
-        timeout: 2000
-      })
+      setLocalStorageData(items.value)
+      store.reloadFaq()
+      showSuccessToast('Successfully Created')
     } else {
-      items.value[editQueId.value].question = payload.question
-      items.value[editQueId.value].answer = payload.answer
-      items.value[editQueId.value].updated = formatDate(Date.now(), 'MMM DD, YYYY, h:mm A')
-
-      localStorage.setItem('faqItem', JSON.stringify(items.value))
-      store.reloadFaq();
-      toast.success('Successfully Updated', {
-        timeout: 2000
-      })
+      const itemToUpdate = items.value[editQueId.value]
+      updateItemProperties(itemToUpdate, payload.question, payload.answer)
+      setLocalStorageData(items.value)
+      store.reloadFaq()
+      showSuccessToast('Successfully Updated')
     }
   }
 
-  return {question,answer,updateValue,items,createFaqItem}
+  
+  function onSubmit() {
+    question.value && answer.value && createFaqItem()
+  }
+  function validateQuestion() {
+    return question.value ? true : 'Question field should not be empty'
+  }
+  function validateAnswer() {
+    return answer.value ? true : 'Answer field should not be empty'
+  }
+
+  function updateItemProperties(item: FaqData, question: string, answer: string) {
+    item.question = question
+    item.answer = answer
+    item.updated = formatDate(Date.now(), 'MMM DD, YYYY, h:mm A')
+  }
+  return { question, answer, updateValue, items, createFaqItem ,onSubmit,validateAnswer,validateQuestion}
 })

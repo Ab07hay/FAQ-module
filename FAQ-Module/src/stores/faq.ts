@@ -1,39 +1,33 @@
-import { getLocalStorageData } from '@/composable/localStorageData'
+import { getLocalStorageData, setLocalStorageData } from '@/composable/localStorageData'
+import { showSuccessToast } from '@/composable/toast'
 import type { FaqData } from '@/interfaces/faqPayload'
 import { defineStore } from 'pinia'
-import { computed, ref, watch } from 'vue'
+import { computed, ref } from 'vue'
 import { useToast } from 'vue-toastification'
 
 export const useFaqStore = defineStore('faqModule', () => {
   const searchFieldValue = ref<string>('')
-
   const faqData = ref<FaqData[]>([])
   const editFaqId = ref()
   const editQueId = ref()
   const createFaqEnable = ref('')
   const editFaqEnable = ref('')
   const toast = useToast()
-  // const listItems: any = localStorage.getItem('faqItem') ? localStorage.getItem('faqItem') : ''
-  // faqData.value = JSON.parse(listItems)
-  faqData.value=getLocalStorageData()
+
+  faqData.value = getLocalStorageData()
+
   const filteredItemss = computed(() => {
-    if (searchFieldValue.value === '') {
-      return faqData.value
-    } else {
-      const searchTerm = searchFieldValue.value.toLowerCase()
-      const filterValue: any = faqData.value.filter((item: { question: string }) =>
-        item.question.toLowerCase().includes(searchTerm)
-      )
-      return filterValue
-    }
+    const searchTerm = searchFieldValue.value.toLowerCase()
+
+    return searchTerm === ''
+      ? faqData.value
+      : faqData.value.filter((item) => item.question.toLowerCase().includes(searchTerm))
   })
 
   function reloadFaq() {
-    // const listItems: any = localStorage.getItem('faqItem') ? localStorage.getItem('faqItem') : ''
-    // faqData.value = JSON.parse(listItems)
-    faqData.value=getLocalStorageData()
+    faqData.value = getLocalStorageData()
   }
-  
+
   function editFaq(index: number) {
     editFaqId.value = faqData.value.filter((data: FaqData, i: number) => {
       return i === index ? data : ''
@@ -47,11 +41,9 @@ export const useFaqStore = defineStore('faqModule', () => {
     let text = 'Are you sure, you want to delete this item'
     if (confirm(text) == true) {
       faqData.value.splice(index, 1)
-      localStorage.setItem('faqItem', JSON.stringify(faqData.value))
-      toast.success('Successfully Deleted', {
-        timeout: 2000
-      })
-    } 
+      setLocalStorageData(faqData.value)
+      showSuccessToast('Successfully Deleted')
+    }
   }
 
   function createFaq() {
