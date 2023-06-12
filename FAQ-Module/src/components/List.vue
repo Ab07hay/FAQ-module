@@ -5,7 +5,7 @@
   <div class="text-right mt-3">
     <label for="my-modal" class="btn btn-primary" @click="createFaq()">Create FAQ</label>
     <div :key="Math.random()">
-      <modalApp @cancel="cancel" />
+      <Modal :editFaqId="editFaqId" :createFaqEnable="createFaqEnable" :editFaqEnable="editFaqEnable" @cancel="cancel"/>
     </div>
   </div>
   <div class="form-control mt-3">
@@ -39,7 +39,7 @@
   <div class="overflow-x-auto mt-5">
     <table class="table table-zebra w-full">
       <!-- head -->
-      <thead>
+      <thead class="text-center">
         <tr>
           <th></th>
           <th>Question</th>
@@ -50,7 +50,7 @@
           <th>Delete</th>
         </tr>
       </thead>
-      <tbody v-if="filteredItems && filteredItems.length > 0">
+      <tbody class="text-center" v-if="filteredItems && filteredItems.length > 0">
         <!-- row 1 -->
         <tr class="bg-base-200" v-for="(item, index) in filteredItems" :key="item">
           <th>{{ index + 1 }}</th>
@@ -68,8 +68,8 @@
               >{{ item.answer }}</span
             >
           </td>
-          <td><span></span>{{ item.created }}</td>
-          <td><span></span>{{ item.created }}</td>
+          <td>{{ item.created }}</td>
+          <td >{{ item.updated?item.updated:'---' }}</td>
           <td>
             <label for="my-modal" class="btn btn-outline" @click="editFaq(index)">
               <svg
@@ -117,60 +117,14 @@
   </div>
 </template>
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
-import modalApp from './Modal.vue'
+import { computed } from 'vue'
+// import ModalApp from './Modal.vue'
+import Modal from './Modal.vue';
 import { useFaqStore } from '../stores/faq'
 import { storeToRefs } from 'pinia'
 const store = useFaqStore()
 const { createFaqEnable, editFaqEnable, editFaqId, faqData, searchFieldValue } = storeToRefs(store)
-const { cancel, createFaq, deleteFaq, editFaq } = store
+const { cancel,  deleteFaq, editFaq,createFaq } = store
 const filteredItems = computed(() => store.filteredItemss)
-// import { useToast } from 'vue-toastification'
-// const toast = useToast()
-// const searchFieldValue = ref('')
-// const faqData = ref()
-// const editFaqId = ref<{}>()
-// const createFaqEnable = ref('')
-// const editFaqEnable = ref('')
-// function createFaq() {
-//   createFaqEnable.value = 'create'
-// }
-// function cancel() {
-//   createFaqEnable.value = 'create'
-//   editFaqEnable.value = ''
-// }
-// onMounted(() => {
-//   console.log('hello mounted');
 
-//   const listItems: any = localStorage.getItem('faqItem') ? localStorage.getItem('faqItem') : ''
-//   faqData.value = JSON.parse(listItems)
-// })
-// function deleteFaq(index: number) {
-//   faqData.value.splice(index, 1)
-//   localStorage.setItem('faqItem', JSON.stringify(faqData.value))
-//   toast.success('Successfully Deleted', {
-//     timeout: 2000
-//   })
-// }
-// function searchByValue(payload:any) {
-//   faqData.value=payload
-// }
-// function editFaq(index: number) {
-//   editFaqId.value = faqData.value.filter((data: any, i: any) => {
-//     return i === index ? data : ''
-//   })
-//   createFaqEnable.value = ''
-//   editFaqEnable.value = 'edit'
-// }
-// const filteredItems = computed(() => {
-//   if (searchFieldValue.value === '') {
-//     return faqData.value
-//   } else {
-//     const searchTerm = searchFieldValue.value.toLowerCase()
-//     const filterValue: any = faqData.value.filter((item: { question: string }) =>
-//       item.question.toLowerCase().includes(searchTerm)
-//     )
-//     return filterValue
-//   }
-// })
 </script>

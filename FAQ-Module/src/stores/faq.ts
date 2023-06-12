@@ -1,22 +1,20 @@
+import type { FaqData } from '@/interfaces/faqPayload'
 import { defineStore } from 'pinia'
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useToast } from 'vue-toastification'
 
 export const useFaqStore = defineStore('faqModule', () => {
   const searchFieldValue = ref<string>('')
-  interface FaqData {
-    question: string
-    answer: string
-    created: Date
-    updated?: Date
-  }
+
   const faqData = ref<FaqData[]>([])
   const editFaqId = ref()
+  const editQueId = ref()
   const createFaqEnable = ref('')
   const editFaqEnable = ref('')
   const toast = useToast()
-  const listItems: any= localStorage.getItem('faqItem') ? localStorage.getItem('faqItem') : ''
+  const listItems: any = localStorage.getItem('faqItem') ? localStorage.getItem('faqItem') : ''
   faqData.value = JSON.parse(listItems)
+
   const filteredItemss = computed(() => {
     if (searchFieldValue.value === '') {
       return faqData.value
@@ -29,20 +27,31 @@ export const useFaqStore = defineStore('faqModule', () => {
     }
   })
 
+  function reloadFaq() {
+    const listItems: any = localStorage.getItem('faqItem') ? localStorage.getItem('faqItem') : ''
+    faqData.value = JSON.parse(listItems)
+  }
+  
   function editFaq(index: number) {
-    editFaqId.value = faqData.value.filter((data: any, i: any) => {
+    editFaqId.value = faqData.value.filter((data: FaqData, i: number) => {
       return i === index ? data : ''
     })
     createFaqEnable.value = ''
+    editQueId.value = index
     editFaqEnable.value = 'edit'
   }
 
   function deleteFaq(index: number) {
-    faqData.value.splice(index, 1)
-    localStorage.setItem('faqItem', JSON.stringify(faqData.value))
-    toast.success('Successfully Deleted', {
-      timeout: 2000
-    })
+    let text = 'Are you sure, you want to delete this item'
+    if (confirm(text) == true) {
+      faqData.value.splice(index, 1)
+      localStorage.setItem('faqItem', JSON.stringify(faqData.value))
+      toast.success('Successfully Deleted', {
+        timeout: 2000
+      })
+    } else {
+      // text = "You canceled!";
+    }
   }
 
   function createFaq() {
@@ -58,7 +67,9 @@ export const useFaqStore = defineStore('faqModule', () => {
     createFaq,
     deleteFaq,
     editFaq,
+    reloadFaq,
     faqData,
+    editQueId,
     filteredItemss,
     searchFieldValue,
     toast,

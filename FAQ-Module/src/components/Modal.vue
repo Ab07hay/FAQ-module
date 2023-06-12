@@ -26,7 +26,7 @@
         <textarea
           type="text"
           placeholder="Type here"
-          v-model="answer"
+          v-model.trim="answer"
           class="input input-bordered w-full max-w-xs"
         />
         <label class="label">
@@ -42,79 +42,46 @@
   </div>
 </template>
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import { useToast } from 'vue-toastification'
-import moment from 'moment'
-import { useFaqStore } from '.././stores/faq';
-import { storeToRefs } from 'pinia';
-const store = useFaqStore()
-const {editFaqId,editFaqEnable,createFaqEnable}= storeToRefs(store)
-// const props = defineProps<{
-//   editFaqId: any
-//   createFaqEnable: any
-//   editFaqEnable: any
-// }>()
-const toast = useToast()
+import { onMounted, onUpdated } from 'vue'
+import { useFaqStore } from '.././stores/faq'
+import { storeToRefs } from 'pinia'
+import { useModalStore } from '../stores/modal'
 
-const question = ref('')
-const answer = ref('')
-const updateValue = ref('')
-const items = ref<Record<string, string>[]>([])
+
+
+const store = useFaqStore()
+const { editFaqId, editFaqEnable, createFaqEnable } = storeToRefs(store)
+const modalStore = useModalStore()
+const { answer, items, question, updateValue } = storeToRefs(modalStore)
+const { createFaqItem } = modalStore
+
+const props = defineProps<{
+  editFaqId: any
+  createFaqEnable: string
+  editFaqEnable: string
+}>()
 const emits = defineEmits<{
   (e: 'cancel'): void
+  (e: 'createFaq'): void
   
 }>()
-function formatDate(date: string | Date | number, dateFormat = 'MMMM Do YYYY, h:mm:ss A') {
-  return moment(date).format(dateFormat)
+function createFaq() {
+  emits('createFaq')
 }
-const previousItems = localStorage.getItem('faqItem')
-const re = JSON.parse(previousItems)
-// console.log(re);
-re.forEach((element: any) => {
-  items.value.push(element)
-})
 items.value.push()
-function createFaqItem() {
-  const payload = {
-    question: question.value.trim(),
-    answer: answer.value.trim(),
-    created: formatDate(Date.now(), 'MMM DD, YYYY, h:mm A')
-  }
-  if(createFaqEnable.value==='create'){
-    items.value.unshift(payload)
-  localStorage.setItem('faqItem', JSON.stringify(items.value))
-  toast.success('Successfully Created', {
-    timeout: 2000
-  })
-  }
-  else{
-    items.value[4].question=payload.question
-    items.value[4].answer=payload.answer
-    items.value[4].updated=formatDate(Date.now(), 'MMM DD, YYYY, h:mm A')
-    
-  localStorage.setItem('faqItem', JSON.stringify(items.value))
-  toast.success('Successfully Updated', {
-    timeout: 2000
-  })
-  }
-}
 function cancel() {
   question.value = ''
   updateValue.value = ''
   answer.value = ''
   emits('cancel')
 }
-
 onMounted(() => {
-
-  
-  updateValue.value = editFaqEnable.value
-
-  if (updateValue.value === 'edit') {
-    question.value = editFaqId.value[0].question
-    answer.value = editFaqId.value[0].answer
+   updateValue.value = props.editFaqEnable
+  if (editFaqEnable.value === 'edit') {
+    question.value = props.editFaqId[0].question
+    answer.value = props.editFaqId[0].answer
   }
-  if (createFaqEnable.value === 'create') {
+  if (props.createFaqEnable === 'create') {
     question.value = ''
     answer.value = ''
   }
