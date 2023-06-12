@@ -4,3 +4,4 @@ export interface FaqData {
   created: string
   updated?: string
 }
+//interface is use for the proper type of variabale

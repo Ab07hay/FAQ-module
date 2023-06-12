@@ -6,13 +6,20 @@ import type { FaqData } from '@/interfaces/faqPayload'
 import { getLocalStorageData, setLocalStorageData } from '@/composable/localStorageData'
 import { showSuccessToast } from '@/composable/toast'
 
+//this is the modal store for use for listing page 
+
 export const useModalStore = defineStore('modal', () => {
   const store = useFaqStore()
   const { createFaqEnable, editQueId } = storeToRefs(store)
+
+  //all below ref here act as a state properties
+
   const question = ref('')
   const answer = ref('')
   const updateValue = ref('')
   const items = ref<FaqData[]>([])
+
+  //all the given functions becomes actions
 
   function createFaqItem() {
     const localStorageData = getLocalStorageData()
@@ -45,10 +52,10 @@ export const useModalStore = defineStore('modal', () => {
     question.value && answer.value && createFaqItem()
   }
   function validateQuestion() {
-    return question.value ? true : 'Question field should not be empty'
+    return question.value ? true : 'Question field is required'
   }
   function validateAnswer() {
-    return answer.value ? true : 'Answer field should not be empty'
+    return answer.value ? true : 'Answer field is required'
   }
 
   function updateItemProperties(item: FaqData, question: string, answer: string) {

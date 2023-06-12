@@ -1,26 +1,30 @@
 <template>
   <p class="text-xl float-left font-mono hover:underline decoration-solid mt-5">
-    Frequently Asked Quetions?
+    Frequently Asked Questions?
   </p>
   <div class="text-right mt-3">
     <label for="my-modal" class="btn btn-primary" @click="createFaq()">Create FAQ</label>
+
     <div :key="Math.random()">
-      <Modal :editFaqId="editFaqId" :createFaqEnable="createFaqEnable" :editFaqEnable="editFaqEnable" @cancel="cancel"/>
+      <ModalDialog
+        :editFaqId="editFaqId"
+        :createFaqEnable="createFaqEnable"
+        :editFaqEnable="editFaqEnable"
+        @cancel="cancel"
+      />
     </div>
   </div>
   <div class="text-right mt-3">
-      <input
-        type="text" 
-        placeholder="Search Quetion... "
-        v-model="searchFieldValue" 
-        class="input input-bordered w-1/3"
-      />
-    </div>
-    
-  <!-- <searchBar @searchByValue="searchByValue"></searchBar> -->
+    <input
+      type="text"
+      placeholder="Search with Question, Answer "
+      v-model="searchFieldValue"
+      class="input input-bordered w-1/3"
+    />
+  </div>
+
   <div class="overflow-x-auto mt-5">
     <table class="table table-zebra w-full">
-      <!-- head -->
       <thead class="text-center">
         <tr>
           <th></th>
@@ -33,7 +37,6 @@
         </tr>
       </thead>
       <tbody class="text-center" v-if="filteredItems && filteredItems.length > 0">
-        <!-- row 1 -->
         <tr class="bg-base-200" v-for="(item, index) in filteredItems" :key="index">
           <th>{{ index + 1 }}</th>
           <td>
@@ -51,7 +54,7 @@
             >
           </td>
           <td>{{ item.created }}</td>
-          <td >{{ item.updated?item.updated:'---' }}</td>
+          <td>{{ item.updated ? item.updated : '---' }}</td>
           <td>
             <label for="my-modal" class="btn btn-outline" @click="editFaq(index)">
               <svg
@@ -92,16 +95,19 @@
       </tbody>
       <tbody v-else>
         <tr>
-          <td align="center" colspan="7"><i>No frequently asked quetions Found</i></td>
+          <td align="center" colspan="7"><i>No frequently asked questions found</i></td>
         </tr>
       </tbody>
     </table>
   </div>
 </template>
 <script setup lang="ts">
-const store = useFaqStore()
-const { createFaqEnable, editFaqEnable, editFaqId, faqData, searchFieldValue } = storeToRefs(store)
-const { cancel,  deleteFaq, editFaq,createFaq } = store
-const filteredItems = computed(() => store.filteredItemss)
 
+//all the components and stores are auto imported so no need to import it manually we mentioned code in vite.config.ts file for the autoImport
+
+const store = useFaqStore()  //here using faq store 
+
+const { createFaqEnable, editFaqEnable, editFaqId, searchFieldValue } = storeToRefs(store) // because of destructuring all states we need to use storeToRefs to mainatain reactivity
+const { cancel, deleteFaq, editFaq, createFaq } = store // function not required storeToRefs
+const filteredItems = computed(() => store.filteredItemss) 
 </script>

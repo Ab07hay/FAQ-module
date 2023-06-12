@@ -5,15 +5,15 @@
   <div class=" ">
     <div class="bg-sky-900">
       <div class="container mx-auto">
-        <Navbar></Navbar>
+        <NavigationBar></NavigationBar>
       </div>
     </div>
     <div class="container mx-auto min-h-[700px]">
-      <list></list>
+      <ItemList></ItemList>
     </div>
     <div class="bg-gray-100">
       <div class="container mx-auto m-12">
-        <Footer></Footer>
+        <PageFooter></PageFooter>
       </div>
     </div>
   </div>
