@@ -34,7 +34,7 @@
       </thead>
       <tbody class="text-center" v-if="filteredItems && filteredItems.length > 0">
         <!-- row 1 -->
-        <tr class="bg-base-200" v-for="(item, index) in filteredItems" :key="item">
+        <tr class="bg-base-200" v-for="(item, index) in filteredItems" :key="index">
           <th>{{ index + 1 }}</th>
           <td>
             <span
