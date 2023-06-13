@@ -3,7 +3,6 @@ import { showSuccessToast } from '@/composable/toast'
 import type { FaqData } from '@/interfaces/faqPayload'
 import { defineStore } from 'pinia' // pinia here is use for state management
 import { computed, ref } from 'vue'
-import { useToast } from 'vue-toastification'
 
 //this is the faqModule store for use for listing page
 export const useFaqStore = defineStore('faqModule', () => {
