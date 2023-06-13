@@ -1,25 +1,24 @@
-import { getLocalStorageData, setLocalStorageData } from '@/composable/localStorageData' 
+import { getLocalStorageData, setLocalStorageData } from '@/composable/localStorageData'
 import { showSuccessToast } from '@/composable/toast'
 import type { FaqData } from '@/interfaces/faqPayload'
 import { defineStore } from 'pinia' // pinia here is use for state management
 import { computed, ref } from 'vue'
 import { useToast } from 'vue-toastification'
 
-//this is the faqModule store for use for listing page 
+//this is the faqModule store for use for listing page
 export const useFaqStore = defineStore('faqModule', () => {
-
-//all below ref here act as a state properties
+  const modalStore = useModalStore()
+  const { answer, question } = storeToRefs(modalStore)
+  //all below ref here act as a state properties
   const searchFieldValue = ref<string>('')
   const faqData = ref<FaqData[]>([])
   const editFaqId = ref()
+  const globalErrorHandlerKey = ref(true)
   const editQueId = ref()
-  const createFaqEnable = ref('')
-  const editFaqEnable = ref('')
-  const toast = useToast()
 
   faqData.value = getLocalStorageData()
 
-  //computed act as a getters in pinia state management 
+  //computed act as a getters in pinia state management
 
   //below computed is for the search box user are able to search with quetion or answer
   const filteredItemss = computed(() => {
@@ -44,9 +43,18 @@ export const useFaqStore = defineStore('faqModule', () => {
     editFaqId.value = faqData.value.filter((data: FaqData, i: number) => {
       return i === index ? data : ''
     })
-    createFaqEnable.value = ''
     editQueId.value = index
-    editFaqEnable.value = 'edit'
+
+    if (editQueId.value >= 0) {
+      answer.value = editFaqId.value[0].answer
+      question.value = editFaqId.value[0].question
+    }
+  }
+
+  function createFaq() {
+    answer.value = ''
+    question.value = ''
+    globalErrorHandlerKey.value = false
   }
 
   function deleteFaq(index: number) {
@@ -58,27 +66,17 @@ export const useFaqStore = defineStore('faqModule', () => {
     }
   }
 
-  function createFaq() {
-    createFaqEnable.value = 'create'
-  }
-  function cancel() {
-    createFaqEnable.value = 'create'
-    editFaqEnable.value = ''
-  }
 
   return {
-    cancel,
-    createFaq,
     deleteFaq,
     editFaq,
     reloadFaq,
+    createFaq,
     faqData,
+    globalErrorHandlerKey,
     editQueId,
     filteredItemss,
     searchFieldValue,
-    toast,
-    editFaqEnable,
-    createFaqEnable,
     editFaqId
   }
 })

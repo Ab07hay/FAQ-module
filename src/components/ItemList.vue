@@ -6,11 +6,7 @@
     <label for="my-modal" class="btn btn-primary" @click="createFaq()">Create FAQ</label>
 
     <div :key="Math.random()">
-      <ModalDialog
-        :editFaqId="editFaqId"
-        :createFaqEnable="createFaqEnable"
-        :editFaqEnable="editFaqEnable"
-        @cancel="cancel"
+      <ModalDialog 
       />
     </div>
   </div>
@@ -107,7 +103,7 @@
 
 const store = useFaqStore()  //here using faq store 
 
-const { createFaqEnable, editFaqEnable, editFaqId, searchFieldValue } = storeToRefs(store) // because of destructuring all states we need to use storeToRefs to mainatain reactivity
-const { cancel, deleteFaq, editFaq, createFaq } = store // function not required storeToRefs
+const {  searchFieldValue } = storeToRefs(store) // because of destructuring all states we need to use storeToRefs to mainatain reactivity
+const {  deleteFaq, editFaq,createFaq } = store // function not required storeToRefs
 const filteredItems = computed(() => store.filteredItemss) 
 </script>
