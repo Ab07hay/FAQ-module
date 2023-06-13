@@ -53,6 +53,7 @@ export const useFaqStore = defineStore('faqModule', () => {
   function createFaq() {
     answer.value = ''
     question.value = ''
+    editQueId.value = undefined
     globalErrorHandlerKey.value = false
   }
 
@@ -64,7 +65,6 @@ export const useFaqStore = defineStore('faqModule', () => {
       showSuccessToast('Successfully Deleted')
     }
   }
-
 
   return {
     deleteFaq,
