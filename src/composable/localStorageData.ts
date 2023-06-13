@@ -3,7 +3,7 @@ import type { FaqData } from "@/interfaces/faqPayload"
 //below function is use to get the data from local storage
 export function getLocalStorageData() {
     const getFaqItemData:any = localStorage.getItem(faqItem) ? localStorage.getItem(faqItem) : ''
-    return JSON.parse(getFaqItemData)
+    return getFaqItemData?JSON.parse(getFaqItemData):[]
 }
 //below function is use to set the data in local storage
 
