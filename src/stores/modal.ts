@@ -32,7 +32,7 @@ export const useModalStore = defineStore('modal', () => {
       created: formatDate(Date.now(), 'MMM DD, YYYY, h:mm A'),
       updated: ''
     }
-
+    
     if (store.editQueId >= 0) {
       const itemToUpdate = items.value[store.editQueId]
       updateItemProperties(itemToUpdate, payload.question, payload.answer)

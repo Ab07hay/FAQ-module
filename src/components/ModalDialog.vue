@@ -62,6 +62,4 @@ const store = useFaqStore()
 const modalStore = useModalStore()
 const { answer, question } = storeToRefs(modalStore)
 const { onSubmit, validateAnswer, validateQuestion,cancel } = modalStore
-
-
 </script>
